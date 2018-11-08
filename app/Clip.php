@@ -3,6 +3,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\MediaLibrary\HasMedia\HasMedia;
 
 /**
  * Class Clip
@@ -11,12 +13,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $title
  * @property text $description
  * @property text $notes
+ * @property string $video
 */
-class Clip extends Model
+class Clip extends Model implements HasMedia
 {
-    use SoftDeletes;
+    use SoftDeletes, HasMediaTrait;
 
-    protected $fillable = ['title', 'description', 'notes'];
+    protected $fillable = ['title', 'description', 'notes', 'video'];
     protected $hidden = [];
     
     

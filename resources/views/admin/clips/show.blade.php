@@ -24,6 +24,26 @@
                             <th>@lang('global.clips.fields.notes')</th>
                             <td field-key='notes'>{!! $clip->notes !!}</td>
                         </tr>
+                        <tr>
+                            <th>@lang('global.clips.fields.video')</th>
+                            <td field-key='video'>
+                            <video controls poster="">
+                              <source src="{{ asset(env('UPLOAD_PATH').'/' . $clip->video) }}" type="video/mp4">
+                              Your browser does not support the video tag.
+                            </video>
+                            @if($clip->video)<a href="{{ asset(env('UPLOAD_PATH').'/' . $clip->video) }}" target="_blank">Download file</a>@endif
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>@lang('global.clips.fields.images')</th>
+                            <td field-key='images'> 
+                                @foreach($clip->getMedia('images') as $media)
+                                <p class="form-group">
+                                    <a href="{{ $media->getUrl() }}" target="_blank">{{ $media->name }} ({{ $media->size }} KB)</a>
+                                    {{ $media }}
+                                </p>
+                                @endforeach</td>
+                        </tr>
                     </table>
                 </div>
             </div>

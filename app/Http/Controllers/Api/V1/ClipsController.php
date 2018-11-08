@@ -7,10 +7,13 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreClipsRequest;
 use App\Http\Requests\Admin\UpdateClipsRequest;
+use App\Http\Controllers\Traits\FileUploadTrait;
 use Yajra\DataTables\DataTables;
 
 class ClipsController extends Controller
 {
+    use FileUploadTrait;
+
     public function index()
     {
         return Clip::all();
@@ -23,6 +26,7 @@ class ClipsController extends Controller
 
     public function update(UpdateClipsRequest $request, $id)
     {
+        $request = $this->saveFiles($request);
         $clip = Clip::findOrFail($id);
         $clip->update($request->all());
         
@@ -32,6 +36,7 @@ class ClipsController extends Controller
 
     public function store(StoreClipsRequest $request)
     {
+        $request = $this->saveFiles($request);
         $clip = Clip::create($request->all());
         
 

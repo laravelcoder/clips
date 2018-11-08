@@ -8,10 +8,13 @@ use Illuminate\Support\Facades\Gate;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreClipsRequest;
 use App\Http\Requests\Admin\UpdateClipsRequest;
+use App\Http\Controllers\Traits\FileUploadTrait;
 use Yajra\DataTables\DataTables;
 
 class ClipsController extends Controller
 {
+    use FileUploadTrait;
+
     /**
      * Display a listing of Clip.
      *
@@ -41,6 +44,7 @@ class ClipsController extends Controller
                 'clips.title',
                 'clips.description',
                 'clips.notes',
+                'clips.video',
             ]);
             $table = Datatables::of($query);
 
@@ -64,8 +68,19 @@ class ClipsController extends Controller
             $table->editColumn('notes', function ($row) {
                 return $row->notes ? $row->notes : '';
             });
+            $table->editColumn('video', function ($row) {
+                if($row->video) { return '<a href="'.asset(env('UPLOAD_PATH').'/'.$row->video) .'" target="_blank">Download file</a>'; };
+            });
+            $table->editColumn('images', function ($row) {
+                $build  = '';
+                foreach ($row->getMedia('images') as $media) {
+                    $build .= '<p class="form-group"><a href="' . $media->getUrl() . '" target="_blank">' . $media->name . '</a></p>';
+                }
+                
+                return $build;
+            });
 
-            $table->rawColumns(['actions','massDelete']);
+            $table->rawColumns(['actions','massDelete','video','images']);
 
             return $table->make(true);
         }
@@ -97,8 +112,16 @@ class ClipsController extends Controller
         if (! Gate::allows('clip_create')) {
             return abort(401);
         }
+        $request = $this->saveFiles($request);
         $clip = Clip::create($request->all());
 
+
+        foreach ($request->input('images_id', []) as $index => $id) {
+            $model          = config('medialibrary.media_model');
+            $file           = $model::find($id);
+            $file->model_id = $clip->id;
+            $file->save();
+        }
 
 
         return redirect()->route('admin.clips.index');
@@ -133,9 +156,20 @@ class ClipsController extends Controller
         if (! Gate::allows('clip_edit')) {
             return abort(401);
         }
+        $request = $this->saveFiles($request);
         $clip = Clip::findOrFail($id);
         $clip->update($request->all());
 
+
+        $media = [];
+        foreach ($request->input('images_id', []) as $index => $id) {
+            $model          = config('medialibrary.media_model');
+            $file           = $model::find($id);
+            $file->model_id = $clip->id;
+            $file->save();
+            $media[] = $file->toArray();
+        }
+        $clip->updateMedia($media, 'images');
 
 
         return redirect()->route('admin.clips.index');
@@ -171,7 +205,7 @@ class ClipsController extends Controller
             return abort(401);
         }
         $clip = Clip::findOrFail($id);
-        $clip->delete();
+        $clip->deletePreservingMedia();
 
         return redirect()->route('admin.clips.index');
     }
@@ -190,7 +224,7 @@ class ClipsController extends Controller
             $entries = Clip::whereIn('id', $request->input('ids'))->get();
 
             foreach ($entries as $entry) {
-                $entry->delete();
+                $entry->deletePreservingMedia();
             }
         }
     }

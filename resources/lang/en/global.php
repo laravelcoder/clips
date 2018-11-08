@@ -5,7 +5,7 @@ return [
 		'permissions' => [		'title' => 'Permissions',		'fields' => [			'title' => 'Title',		],	],
 		'roles' => [		'title' => 'Roles',		'fields' => [			'title' => 'Title',			'permission' => 'Permissions',		],	],
 		'users' => [		'title' => 'Users',		'fields' => [			'name' => 'Name',			'email' => 'Email',			'password' => 'Password',			'role' => 'Role',			'remember-token' => 'Remember token',		],	],
-		'clips' => [		'title' => 'Clips',		'fields' => [			'title' => 'Title',			'description' => 'Description',			'notes' => 'Notes',		],	],
+		'clips' => [		'title' => 'Clips',		'fields' => [			'title' => 'Title',			'description' => 'Description',			'notes' => 'Notes',			'video' => 'Video',			'images' => 'Images',		],	],
 	'app_create' => 'Create',
 	'app_save' => 'Save',
 	'app_edit' => 'Edit',

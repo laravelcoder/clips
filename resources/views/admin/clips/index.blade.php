@@ -32,6 +32,8 @@
                         @endcan
 
                         <th>@lang('global.clips.fields.title')</th>
+                        <th>@lang('global.clips.fields.video')</th>
+                        <th>@lang('global.clips.fields.images')</th>
                         @if( request('show_deleted') == 1 )
                         <th>&nbsp;</th>
                         @else
@@ -51,11 +53,15 @@
         @endcan
         $(document).ready(function () {
             window.dtDefaultOptions.ajax = '{!! route('admin.clips.index') !!}?show_deleted={{ request('show_deleted') }}';
-            window.dtDefaultOptions.columns = [@can('clip_delete')
-                @if ( request('show_deleted') != 1 )
-                    {data: 'massDelete', name: 'id', searchable: false, sortable: false},
-                @endif
-                @endcan{data: 'title', name: 'title'},
+            window.dtDefaultOptions.columns = [
+                @can('clip_delete')
+                    @if ( request('show_deleted') != 1 )
+                        {data: 'massDelete', name: 'id', searchable: false, sortable: false},
+                    @endif
+                @endcan
+                {data: 'title', name: 'title'},
+                {data: 'video', name: 'video'},
+                {data: 'images', name: 'images', searchable: false},
                 
                 {data: 'actions', name: 'actions', searchable: false, sortable: false}
             ];

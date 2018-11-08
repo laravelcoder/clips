@@ -29,6 +29,8 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'admin', 'as' => 'admin.'], 
     Route::post('clips_mass_destroy', ['uses' => 'Admin\ClipsController@massDestroy', 'as' => 'clips.mass_destroy']);
     Route::post('clips_restore/{id}', ['uses' => 'Admin\ClipsController@restore', 'as' => 'clips.restore']);
     Route::delete('clips_perma_del/{id}', ['uses' => 'Admin\ClipsController@perma_del', 'as' => 'clips.perma_del']);
+    Route::post('/spatie/media/upload', 'Admin\SpatieMediaController@create')->name('media.upload');
+    Route::post('/spatie/media/remove', 'Admin\SpatieMediaController@destroy')->name('media.remove');
 
 
 
